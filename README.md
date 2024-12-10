@@ -7,7 +7,7 @@ A simple PHP-based to-do list application developed as part of a challenge in th
 - [Technologies Used](#technologies-used)
 
 ## Demo
-A live demo can be seen using this [link]().
+![Demo](./demo.gif)
 
 ## Features
  - Add new tasks with a description.
