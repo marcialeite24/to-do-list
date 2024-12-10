@@ -5,15 +5,27 @@
         private $task;
 
         public function __construct(Connection $connection, Task $task){
-            $this->connection = $connection;
+            $this->connection = $connection->connect();
             $this->task = $task;
         }
         public function insert() {
-            
+            $query = 'insert into tb_tasks(task)values(:task)';
+            $stmt = $this->connection->prepare($query);
+            $stmt->bindValue('task', $this->task->__get('task'));
+            $stmt->execute();
         }
 
         public function get() {
-
+            $query = '
+                select 
+                    t.id, s.status, t.task 
+                from 
+                    tb_tasks as t
+                    left join tb_status as s on (t.id_status = s.id)
+            ';
+            $stmt = $this->connection->prepare($query);            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
         }
 
         public function update() {

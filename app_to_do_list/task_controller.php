@@ -3,15 +3,22 @@
     require "../../to_do_list/app_to_do_list/task.service.php";
     require "../../to_do_list/app_to_do_list/connection.php";
 
-    echo '<pre>';
-    print_r($_POST);
-    echo '<pre>';
+    $action = isset($_GET['action']) ? $_GET['action'] : $action;
 
-    $task = new Task();
-    $task->__set('task', $_POST['task']);
+    if($action == 'insert') {
+        $task = new Task();
+        $task->__set('task', $_POST['task']);
 
-    $connection = new Connection();
-    $taskService = new TaskService($connection, $task);
+        $connection = new Connection();
+        $taskService = new TaskService($connection, $task);
+        $taskService->insert();
 
+        header('Location: new_task.php?included=1');
+    } elseif ($action == 'get') {
+        $task = new Task();
+        $connection = new Connection();
+        $taskService = new TaskService($connection, $task);
+        $tasks = $taskService->get();
 
+    }
 ?>
