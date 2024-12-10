@@ -29,11 +29,45 @@
         }
 
         public function update() {
-
+            $query = 'update tb_tasks set task = :task where id = :id';
+            //$query = 'update tb_tasks set task = ? where id = ?';
+            $stmt = $this->connection->prepare($query);   
+            $stmt->bindValue(':task', $this->task->__get('task'));
+            //$stmt->bindValue(1, $this->task->__get('task'));
+            $stmt->bindValue(':id', $this->task->__get('id'));
+            //$stmt->bindValue(2, $this->task->__get('id'));  
+            return $stmt->execute();
         }
 
-        public function delete() {
+        public function remove() {
+            $query = 'delete from tb_tasks where id = :id';
+            $stmt = $this->connection->prepare($query);  
+            $stmt->bindValue(':id', $this->task->__get('id'));
+            $stmt->execute();
+        }
 
+        public function markAsDone() {
+            $query = 'update tb_tasks set id_status = ? where id = ?';
+            $stmt = $this->connection->prepare($query);   
+            $stmt->bindValue(1, $this->task->__get('id_status'));
+            $stmt->bindValue(2, $this->task->__get('id'));  
+            return $stmt->execute();
+        }
+
+        public function getPendingTasks() {
+            $query = '
+                select 
+                    t.id, s.status, t.task 
+                from 
+                    tb_tasks as t
+                    left join tb_status as s on (t.id_status = s.id)
+                where 
+                    t.id_status = :id_status
+            ';
+            $stmt = $this->connection->prepare($query);    
+            $stmt->bindValue('id_status', $this->task->__get('id_status'));       
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
         }
     }
 
